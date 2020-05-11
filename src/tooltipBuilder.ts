@@ -25,16 +25,15 @@
  */
 
 // powerbi.extensibility.utils.formatting
-import {valueFormatter as ValueFormatter} from "powerbi-visuals-utils-formattingutils";
-import valueFormatter = ValueFormatter.valueFormatter;
+import { valueFormatter } from "powerbi-visuals-utils-formattingutils";
 
-import powerbi from "powerbi-visuals-api";
-import DataViewMetadataColumn = powerbi.DataViewMetadataColumn;
-import DataViewValueColumn = powerbi.DataViewValueColumn;
-import DataViewCategorical = powerbi.DataViewCategorical;
+import powerbiVisualsApi from "powerbi-visuals-api";
+import DataViewMetadataColumn = powerbiVisualsApi.DataViewMetadataColumn;
+import DataViewValueColumn = powerbiVisualsApi.DataViewValueColumn;
+import DataViewCategorical = powerbiVisualsApi.DataViewCategorical;
 
-import ILocalizationManager = powerbi.extensibility.ILocalizationManager;
-import VisualTooltipDataItem = powerbi.extensibility.VisualTooltipDataItem;
+import ILocalizationManager = powerbiVisualsApi.extensibility.ILocalizationManager;
+import VisualTooltipDataItem = powerbiVisualsApi.extensibility.VisualTooltipDataItem;
 
 const DefaultSeriesIndex: number = 0,
     DefaultDisplayName: string = "",

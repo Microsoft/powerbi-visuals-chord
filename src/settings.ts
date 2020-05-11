@@ -35,11 +35,11 @@ import { dataViewObjectsParser } from "powerbi-visuals-utils-dataviewutils";
 import DataViewObjectsParser = dataViewObjectsParser.DataViewObjectsParser;
 
 // powerbi
-import powerbi from "powerbi-visuals-api";
-import DataView = powerbi.DataView;
+import powerbiVisualsApi from "powerbi-visuals-api";
+import DataView = powerbiVisualsApi.DataView;
 
 // powerbi.extensibility
-import IColorPalette = powerbi.extensibility.IColorPalette;
+import IColorPalette = powerbiVisualsApi.extensibility.IColorPalette;
 
 export class AxisSettings {
     public show: boolean = true;
@@ -70,7 +70,7 @@ export class Settings extends DataViewObjectsParser {
     public labels: LabelsSettings = new LabelsSettings();
     public chord: ChordSettings = new ChordSettings();
 
-    public static parseSettings(dataView: DataView, colorPalette?: IColorPalette): Settings {
+    public static PARSE_SETTINGS(dataView: DataView, colorPalette?: IColorPalette): Settings {
         const settings: Settings = this.parse<Settings>(dataView);
 
         const colorHelper: ColorHelper = new ColorHelper(colorPalette);

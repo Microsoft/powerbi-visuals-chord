@@ -23,8 +23,8 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
  */
-import powerbi from "powerbi-visuals-api";
-import DataView = powerbi.DataView;
+import powerbiVisualsApi from "powerbi-visuals-api";
+import DataView = powerbiVisualsApi.DataView;
 
 // powerbi.extensibility.utils.test
 import { getRandomNumbers, testDataViewBuilder } from "powerbi-visuals-utils-testutils";

@@ -25,6 +25,7 @@
  */
 
 // d3
+import * as d3 from "d3";
 import Selection = d3.Selection;
 
 // powerbi.extensibility.utils.interactivity
@@ -32,6 +33,7 @@ import { interactivitySelectionService, interactivityBaseService } from "powerbi
 import IInteractiveBehavior = interactivityBaseService.IInteractiveBehavior;
 import ISelectionHandler = interactivityBaseService.ISelectionHandler;
 import { ChordArcDescriptor } from "./interfaces";
+import { BaseDataPoint } from "powerbi-visuals-utils-interactivityutils/lib/interactivityBaseService";
 
 export interface BehaviorOptions extends interactivityBaseService.IBehaviorOptions<ChordArcDescriptor> {
     clearCatcher: d3.Selection<d3.BaseType, any, any, any>;
@@ -53,13 +55,58 @@ export class InteractiveBehavior implements IInteractiveBehavior {
         this.behaviorOptions.clearCatcher.on("click", selectionHandler.handleClearSelection.bind(selectionHandler));
 
         this.behaviorOptions.arcSelection.on("click", (dataPoint: ChordArcDescriptor) => {
-            const event: MouseEvent = getEvent() as MouseEvent;
+            const event: MouseEvent = <MouseEvent>getEvent();
 
             event.stopPropagation();
 
             selectionHandler.handleSelection(dataPoint, event && event.ctrlKey);
         });
+        this.bindContextMenu(options, selectionHandler);
+        this.bindContextMenuToClearCatcher(options, selectionHandler);
     }
+
+    protected bindContextMenu(options: BehaviorOptions, selectionHandler: ISelectionHandler) {
+        options.arcSelection.on("contextmenu",
+            (datum) => {
+                const mouseEvent: MouseEvent = <MouseEvent>d3.event;
+                selectionHandler.handleContextMenu(datum, {
+                    x: mouseEvent.clientX,
+                    y: mouseEvent.clientY
+                });
+                mouseEvent.preventDefault();
+                mouseEvent.stopPropagation();
+            });
+    }
+
+    protected bindContextMenuToClearCatcher(options: BehaviorOptions, selectionHandler: ISelectionHandler) {
+        const {
+            clearCatcher
+        } = options;
+
+        const emptySelection = {
+            "measures": [],
+            "dataMap": {
+            }
+        };
+
+        clearCatcher.on("contextmenu", () => {
+            const event: MouseEvent = <MouseEvent>getEvent() || <MouseEvent>window.event;
+            if (event) {
+                selectionHandler.handleContextMenu(
+                    <BaseDataPoint>{
+                        identity: emptySelection,
+                        selected: false
+                    },
+                    {
+                        x: event.clientX,
+                        y: event.clientY
+                    });
+                event.preventDefault();
+                event.stopPropagation();
+            }
+        });
+    }
+
 
     public renderSelection(hasSelection: boolean): void {
         if (!this.behaviorOptions) {

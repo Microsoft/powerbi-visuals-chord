@@ -28,13 +28,13 @@
 import { select as d3select } from "d3";
 import ChordGroup = d3.ChordGroup;
 
-import powerbi from "powerbi-visuals-api";
-import DataView = powerbi.DataView;
-import DataViewValueColumn = powerbi.DataViewValueColumn;
-import PrimitiveValue = powerbi.PrimitiveValue;
-import DataViewCategoryColumn = powerbi.DataViewCategoryColumn;
-import DataViewObjects = powerbi.DataViewObjects;
-import ISelectionId = powerbi.visuals.ISelectionId;
+import powerbiVisualsApi from "powerbi-visuals-api";
+import DataView = powerbiVisualsApi.DataView;
+import DataViewValueColumn = powerbiVisualsApi.DataViewValueColumn;
+import PrimitiveValue = powerbiVisualsApi.PrimitiveValue;
+import DataViewCategoryColumn = powerbiVisualsApi.DataViewCategoryColumn;
+import DataViewObjects = powerbiVisualsApi.DataViewObjects;
+import ISelectionId = powerbiVisualsApi.visuals.ISelectionId;
 
 // powerbi.extensibility.utils.interactivity
 import { interactivitySelectionService } from "powerbi-visuals-utils-interactivityutils";
@@ -45,7 +45,7 @@ import { assertColorsMatch } from "powerbi-visuals-utils-testutils";
 
 import { ChordChart, ChordChartData as ChordChartDataInterface } from "../src/chordChart";
 
-import { ChordChartData } from "./visualData";
+import { ChordChartData } from "./chordChartData";
 import { ChordChartBuilder } from "./visualBuilder";
 import {
     areColorsEqual,
@@ -142,11 +142,11 @@ describe("ChordChart", () => {
             }, 50);
         });
 
-        it("shouldn't throw any unexpected exceptions when category value is null", (done) => {
+        it("shouldn't throw any unexpected exceptions when category value is null", () => {
 
             defaultDataViewBuilder.valuesCategoryGroup[5][0] = null;
             expect(() => {
-                ChordChart.converter(
+                ChordChart.CONVERTER(
                     defaultDataViewBuilder.getDataView(),
                     visualBuilder.visualHost,
                     visualBuilder.visualHost.colorPalette,
@@ -154,7 +154,6 @@ describe("ChordChart", () => {
                 );
             }).not.toThrow();
 
-            done();
         });
 
         it("labels shouldn't be cut off", (done) => {
@@ -239,7 +238,7 @@ describe("ChordChart", () => {
 
                 expect(visualBuilder.sliceTicks).toBeInDOM();
 
-                (dataView.metadata.objects as any).axis.show = false;
+                (<any>dataView.metadata.objects).axis.show = false;
                 visualBuilder.updateFlushAllD3Transitions(dataView);
 
                 expect(visualBuilder.sliceTicks).not.toBeInDOM();
@@ -260,7 +259,7 @@ describe("ChordChart", () => {
 
                 expect(visualBuilder.dataLabels).toBeInDOM();
 
-                (dataView.metadata.objects as any).labels.show = false;
+                (<any>dataView.metadata.objects).labels.show = false;
                 visualBuilder.updateFlushAllD3Transitions(dataView);
 
                 expect(visualBuilder.dataLabels).not.toBeInDOM();
@@ -269,7 +268,7 @@ describe("ChordChart", () => {
             it("color", () => {
                 const color: string = "#222222";
 
-                (dataView.metadata.objects as any).labels.color = getSolidColorStructuralObject(color);
+                (<any>dataView.metadata.objects).labels.color = getSolidColorStructuralObject(color);
                 visualBuilder.updateFlushAllD3Transitions(dataView);
 
                 visualBuilder.dataLabels
@@ -283,7 +282,7 @@ describe("ChordChart", () => {
                 const fontSize: number = 22,
                     expectedFontSize: string = "29.3333px";
 
-                (dataView.metadata.objects as any).labels.fontSize = fontSize;
+                (<any>dataView.metadata.objects).labels.fontSize = fontSize;
                 visualBuilder.updateFlushAllD3Transitions(dataView);
 
                 visualBuilder.dataLabels
@@ -326,11 +325,11 @@ describe("ChordChart", () => {
                 category.objects = [];
 
                 category.values.forEach((value: PrimitiveValue, index: number) => {
-                    category.objects[index] = {
+                    category.objects[index] = <DataViewObjects>{
                         dataPoint: {
                             fill: getSolidColorStructuralObject(colors[index])
                         }
-                    } as DataViewObjects;
+                    };
                 });
 
                 visualBuilder.updateFlushAllD3Transitions(dataView);
@@ -355,18 +354,18 @@ describe("ChordChart", () => {
     describe("copyArcDescriptorsWithoutNaNValues", () => {
         it("shouldn't throw any unexpected exceptions when argument is undefined", () => {
             expect(() => {
-                ChordChart.copyArcDescriptorsWithoutNaNValues(undefined);
+                ChordChart.COPY_ARC_DESCRIPTORS_WITHOUT_NAN_VALUES(undefined);
             }).not.toThrow();
         });
 
         it("shouldn't throw any unexpected exceptions when argument is null", () => {
             expect(() => {
-                ChordChart.copyArcDescriptorsWithoutNaNValues(null);
+                ChordChart.COPY_ARC_DESCRIPTORS_WITHOUT_NAN_VALUES(null);
             }).not.toThrow();
         });
 
         it("result of removeNaNValues shouldn't contain any NaN values", () => {
-            const arcDescriptors: ChordGroup[] = ChordChart.copyArcDescriptorsWithoutNaNValues(
+            const arcDescriptors: ChordGroup[] = ChordChart.COPY_ARC_DESCRIPTORS_WITHOUT_NAN_VALUES(
                 createArcDescriptorsWithNaN(5));
 
             arcDescriptorsShouldntContainNaNValues(arcDescriptors);
@@ -395,7 +394,7 @@ describe("ChordChart", () => {
                 return 0;
             });
 
-            chordChartData = ChordChart.converter(
+            chordChartData = ChordChart.CONVERTER(
                 defaultDataViewBuilder.getDataView(),
                 visualBuilder.visualHost,
                 visualBuilder.visualHost.colorPalette,
@@ -407,7 +406,7 @@ describe("ChordChart", () => {
 
         function arcDescriptorsShouldntContainNaNValues(arcDescriptors: ChordGroup[]): void {
             arcDescriptors.forEach((arcDescriptor: ChordGroup) => {
-                for (let propertyName in arcDescriptor) {
+                for (let propertyName of Object.keys(arcDescriptor)) {
                     if (lodashIsNumber(arcDescriptor[propertyName])) {
                         expect(isNaN(arcDescriptor[propertyName])).toBeFalsy();
                     }
@@ -419,7 +418,7 @@ describe("ChordChart", () => {
     describe("check if values absent", () => {
         it("shouldn't throw any unexpected exceptions when Values field is undefined", () => {
             expect(() => {
-                let chordChartData: ChordChartDataInterface = ChordChart.converter(
+                let chordChartData: ChordChartDataInterface = ChordChart.CONVERTER(
                     defaultDataViewBuilder.getDataView(null, true),
                     visualBuilder.visualHost,
                     visualBuilder.visualHost.colorPalette,
@@ -436,7 +435,7 @@ describe("ChordChart", () => {
             let jsonData = getJSONFixture("capabilities.json");
 
             let objectsChecker: Function = (obj) => {
-                for (let property in obj) {
+                for (let property of Object.keys(obj)) {
                     let value: any = obj[property];
 
                     if (value.displayName) {
@@ -457,11 +456,11 @@ describe("ChordChart", () => {
         describe("Power BI Bookmarks", () => {
             it("first identity should be selected", (done) => {
                 visualBuilder.updateRenderTimeout(dataView, () => {
-                    const firstSelectionId: ISelectionId = visualBuilder.instance["data"]["groups"][0]["identity"] as ISelectionId;
+                    const firstSelectionId: ISelectionId = <ISelectionId>visualBuilder.instance["data"]["groups"][0]["identity"];
 
                     visualBuilder.selectionManager.sendSelectionToCallback([firstSelectionId]);
 
-                    const isSelected: boolean = (d3select(visualBuilder.slices.get(0)).datum() as SelectableDataPoint).selected;
+                    const isSelected: boolean = (<SelectableDataPoint>d3select(visualBuilder.slices.get(0)).datum()).selected;
 
                     expect(isSelected).toBeTruthy();
 

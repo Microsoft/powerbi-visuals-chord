@@ -25,8 +25,8 @@
  */
 
 // powerbi
-import powerbi from "powerbi-visuals-api";
-import IViewport = powerbi.IViewport;
+import powerbiVisualsApi from "powerbi-visuals-api";
+import IViewport = powerbiVisualsApi.IViewport;
 
 // powerbi.extensibility.utils.svg
 import { IMargin } from "powerbi-visuals-utils-svgutils";
@@ -91,7 +91,7 @@ export class VisualLayout {
     }
 
     private static restrictToMinMax<T extends Object>(value: T, minValue?: T): T {
-        let result: T = {} as T;
+        let result: T = <T>{};
         Object.keys(value).forEach(x => result[x] = Math.max(minValue && minValue[x] || 0, value[x]));
         return result;
     }

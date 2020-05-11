@@ -109,12 +109,12 @@ export function getTextElementRects(textElement: Element): IRect {
         fontSizeString: string = window.getComputedStyle(textElement).fontSize,
         fontSize: number = parseFloat(fontSizeString);
 
-    return {
+    return <IRect>{
         left: clientRect.left,
         top: clientRect.bottom - fontSize,
         height: fontSize,
         width: clientRect.width
-    } as IRect;
+    };
 }
 
 export function isSomeTextElementOverlapped(

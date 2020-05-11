@@ -28,7 +28,7 @@ import { Arc as d3Arc, interpolate as d3Interpolate } from "d3";
 import { toArray as lodashToArray } from "lodash";
 
 export class ChordChartHelpers {
-    public static interpolateArc(arc: d3Arc<any, any>): any {
+    public static INTERPOLATE_ARC(arc: d3Arc<any, any>): any {
         return function (data) {
             if (!this.oldData) {
                 this.oldData = data;
@@ -41,7 +41,7 @@ export class ChordChartHelpers {
         };
     }
 
-    public static addContext(context: any, fn: Function): any {
+    public static ADD_CONTEXT(context: any, fn: Function): any {
         return <any>function (...arg) {
             return fn.apply(context, [this].concat(lodashToArray(arg)));
         };

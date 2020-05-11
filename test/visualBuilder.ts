@@ -25,11 +25,11 @@
  */
 
 // powerbi
-import powerbi from "powerbi-visuals-api";
-import ISelectionId = powerbi.visuals.ISelectionId;
+import powerbiVisualsApi from "powerbi-visuals-api";
+import ISelectionId = powerbiVisualsApi.visuals.ISelectionId;
 
 // powerbi.extensibility
-import VisualConstructorOptions = powerbi.extensibility.visual.VisualConstructorOptions;
+import VisualConstructorOptions = powerbiVisualsApi.extensibility.visual.VisualConstructorOptions;
 
 // powerbi.extensibility.utils.test
 import { VisualBuilderBase, MockISelectionManager } from "powerbi-visuals-utils-testutils";
@@ -101,6 +101,6 @@ export class SelectionManagerWithBookmarks extends MockISelectionManager {
     }
 
     public getSelectionIds(): ISelectionId[] {
-        return this.selectedSelectionIds as ISelectionId[];
+        return <ISelectionId[]>this.selectedSelectionIds;
     }
 }

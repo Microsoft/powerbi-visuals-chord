@@ -1,3 +1,7 @@
+## 2.1.0
+* API update
+* browser tab crash fix
+
 ## 2.0.4
 * API was downgraded to version 2.2 because of issues related with no-iframe mode
 * Rendering events were removed because they aren't supported by API 2.2
